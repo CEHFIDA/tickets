@@ -1,6 +1,4 @@
 {
-  "route": "AdminTickets",
-  "description": "Поддержа",
-  "icon": "mdi mdi-live_help",
-  "prefix": "admin/tickets"
+  "package": "tickets",
+  "name": "Тикеты"
 }

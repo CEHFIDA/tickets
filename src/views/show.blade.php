@@ -23,8 +23,10 @@
                                                 <li>
                                                     <a href = "{{route('AdminTicketsChat', $ticket->id)}}">
                                                         <span>
-                                                            @php $name = DB::table('users')->where('id', $ticket->user_id)->value('name') @endphp
-                                                            {{$name}}
+                                                            @php
+                                                                $name_ticket = DB::table('users')->where('id', $ticket->user_id)->value('name')
+                                                            @endphp
+                                                            {{$name_ticket}}
                                                         </span>
                                                     </a>
                                                 </li>

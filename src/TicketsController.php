@@ -6,15 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\User;
-use Selfreliance\tickets\Models\Ticket;
-use Selfreliance\tickets\Models\TicketData;
+use Selfreliance\Tickets\Models\Ticket;
+use Selfreliance\Tickets\Models\TicketData;
 
 class TicketsController extends Controller
 {
     public function index()
     {
     	$tickets = Ticket::orderBy('id', 'desc')->get();
-        return view('tickets::home')->with(['tickets'=>$tickets]);
+        return view('tickets::show')->with(['tickets'=>$tickets]);
     }
 
     public function chat($id)

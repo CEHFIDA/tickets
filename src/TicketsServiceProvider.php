@@ -19,7 +19,7 @@ class TicketsServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/views', 'tickets');
         $this->loadMigrationsFrom(__DIR__.'/migrations');
         $this->publishes([
-            __DIR__ . '/migrations/' => base_path('/database/migrations')
+            __DIR__ . '/migrations/' => database_path('migrations')
         ], 'migrations');
     }
 
