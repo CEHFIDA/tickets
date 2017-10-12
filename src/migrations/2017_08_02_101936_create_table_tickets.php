@@ -25,7 +25,8 @@ class CreateTableTickets extends Migration
                 $table->timestamps();
                 $table->softDeletes();
             });
-        }else if (!Schema::hasTable('tickets_data')) {
+        }
+        if (!Schema::hasTable('tickets_data')) {
             Schema::create('tickets_data', function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('tickets_id');

@@ -20,8 +20,7 @@ class TicketsController extends Controller
     public function chat($id)
     {
         $ticket = Ticket::find($id);
-        if(count($ticket) > 0)
-        {
+        if(count($ticket) > 0){
             $name = User::where('id', $ticket->user_id)->value('name');
             $history = TicketData::where('tickets_id', $id)->get();
             $tickets = Ticket::orderBy('id', 'desc')->get();
@@ -41,12 +40,14 @@ class TicketsController extends Controller
             'text' => 'required|min:2'
         ]);
 
-        $send = new TicketData;
-        $send->tickets_id = $id;
-        $send->is_admin = 1;
-        $send->message = $request->input('text');
-        $send->save();
-
-        return redirect()->route('AdminTicketsChat', $id)->with('status', 'Сообщение было отправлено!');
+        $ticket = Ticket::find($id);
+        if(count($ticket) > 0){
+            $send = new TicketData;
+            $send->tickets_id = $id;
+            $send->is_admin = 1;
+            $send->message = $request->input('text');
+            $send->save();
+            return redirect()->route('AdminTicketsChat', $id)->with('status', 'Сообщение было отправлено!');
+        }else return redirect()->route('AdminTickets');
     }
 }

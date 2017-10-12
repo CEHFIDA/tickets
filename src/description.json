@@ -1,4 +1,5 @@
 {
   "package": "tickets",
-  "name": "Тикеты"
+  "name": "Тикеты",
+  "icon": "mdi mdi-forum"
 }

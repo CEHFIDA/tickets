@@ -21,12 +21,9 @@
                                             <ul class="chatonline style-none ">
                                                 @foreach($tickets as $ticket)
                                                 <li>
-                                                    <a href = "{{route('AdminTicketsChat', $ticket->id)}}">
+                                                    <a href="{{route('AdminTicketsChat', $ticket->id)}}">
                                                         <span>
-                                                            @php
-                                                                $name_ticket = DB::table('users')->where('id', $ticket->user_id)->value('name')
-                                                            @endphp
-                                                            {{$name_ticket}}
+                                                            {!! \DB::table('users')->where('id', $ticket->user_id)->value('name') !!}
                                                         </span>
                                                     </a>
                                                 </li>
