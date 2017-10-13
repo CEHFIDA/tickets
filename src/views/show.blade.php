@@ -35,7 +35,36 @@
                                     <!-- .chat-left-panel -->
                                     <!-- .chat-right-panel -->
                                     <div class="chat-right-aside">
-                                        <div class="box bg-light-success">Выберите пользователя со списка слева</div>
+                                         <form action="{{route('AdminTicketsCreate')}}" method="POST" class="form-horizontal">
+                                            <div class="form-group">
+                                                <label for="user" class="col-md-12">Пользователь</label>
+                                                <div class="col-md-12">
+                                                    <select class="custom-select col-12" name="selected_user" id="user">
+                                                        @foreach($users as $user)
+                                                            <option value = "{{ $user->id }}">{{ $user->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="subject" class="col-md-12">Тема</label>
+                                                <div class="col-md-12">
+                                                    <input type="text" class="form-control" name="subject" id="subject">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="message" class="col-md-12">Сообщение</label>
+                                                <div class="col-md-12">
+                                                    <textarea class="form-control" name="message" id="message" rows="10"></textarea>
+                                                </div>
+                                            </div>
+                                            {{ csrf_field() }}
+                                            <div class="form-group">
+                                                <div class="col-sm-12">
+                                                    <button class="btn btn-success">Создать тикет</button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                     <!-- .chat-right-panel -->
                                 </div>
