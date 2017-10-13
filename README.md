@@ -14,7 +14,7 @@ composer require selfreliance/tickets
 
 Migrations
 ```php
-php artisan vendor:publish --provider="Selfreliance\Tickets\TicketsServiceProvider" --tag="migrations" --force
+php artisan vendor:publish --provider="Selfreliance\tickets\TicketsServiceProvider" --tag="migrations" --force
 ```
 
 And do not forget about
