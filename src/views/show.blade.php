@@ -37,13 +37,9 @@
                                     <div class="chat-right-aside">
                                          <form action="{{route('AdminTicketsCreate')}}" method="POST" class="form-horizontal">
                                             <div class="form-group">
-                                                <label for="user" class="col-md-12">Пользователь</label>
+                                                <label for="user" class="col-md-12">ID или Email пользователя</label>
                                                 <div class="col-md-12">
-                                                    <select class="custom-select col-12" name="selected_user" id="user">
-                                                        @foreach($users as $user)
-                                                            <option value = "{{ $user->id }}">{{ $user->name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input type="text" class="form-control" name="to" id="user">
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -77,7 +73,7 @@
                             <h4>Тикетов не найдено!</h4>
                         </div>
                     @endif
-                </div>           
+                </div>
             </div>
         </div>        
     </div>

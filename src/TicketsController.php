@@ -14,8 +14,7 @@ class TicketsController extends Controller
     public function index()
     {
     	$tickets = Ticket::orderBy('id', 'desc')->get();
-        $users = User::all();
-        return view('tickets::show')->with(['tickets'=>$tickets,'users'=>$users]);
+        return view('tickets::show')->with(['tickets'=>$tickets]);
     }
 
     public function chat($id)
@@ -54,21 +53,24 @@ class TicketsController extends Controller
     public function create_ticket(Request $request, Ticket $model, TicketData $modelData)
     {
         $this->validate($request, [
-            'selected_user' => 'required',
+            'to' => 'required',
             'subject' => 'required|min:2',
             'message' => 'required|min:2'
         ]);
 
-        $model->user_id = $request->input('selected_user');
-        $model->from = 'Support';
-        $model->subject = $request->input('subject');
-        $model->save();
+        $user = User::where('id', $request['to'])->orWhere('email', $request['to'])->value('id');
+        if($user){
+            $model->user_id = $user;
+            $model->from = 'Support';
+            $model->subject = $request->input('subject');
+            $model->save();
 
-        $modelData->tickets_id = $model->id;
-        $modelData->is_admin = 1;
-        $modelData->message = $request->input('message');
-        $modelData->save();
+            $modelData->tickets_id = $model->id;
+            $modelData->is_admin = 1;
+            $modelData->message = $request->input('message');
+            $modelData->save();
 
-        return redirect()->route('AdminTickets')->with('status', 'Тикет успешно создан!');
+            return redirect()->route('AdminTickets')->with('status', 'Тикет успешно создан!');
+        }else return redirect()->route('AdminTickets');
     }
 }
