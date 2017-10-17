@@ -2,6 +2,7 @@
 
 @section('pageTitle', 'Тикеты')
 @section('content')
+    <div class="text-right"><button class="btn btn-success" data-toggle="modal" data-target="#createTicket">Создать тикет</button></div>
     <div class="row">
         <!-- Column -->
         <div class="col-12">
@@ -35,32 +36,6 @@
                                     <!-- .chat-left-panel -->
                                     <!-- .chat-right-panel -->
                                     <div class="chat-right-aside">
-                                         <form action="{{route('AdminTicketsCreate')}}" method="POST" class="form-horizontal">
-                                            <div class="form-group">
-                                                <label for="user" class="col-md-12">ID или Email пользователя</label>
-                                                <div class="col-md-12">
-                                                    <input type="text" class="form-control" name="to" id="user">
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="subject" class="col-md-12">Тема</label>
-                                                <div class="col-md-12">
-                                                    <input type="text" class="form-control" name="subject" id="subject">
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="message" class="col-md-12">Сообщение</label>
-                                                <div class="col-md-12">
-                                                    <textarea class="form-control" name="message" id="message" rows="10"></textarea>
-                                                </div>
-                                            </div>
-                                            {{ csrf_field() }}
-                                            <div class="form-group">
-                                                <div class="col-sm-12">
-                                                    <button class="btn btn-success">Создать тикет</button>
-                                                </div>
-                                            </div>
-                                        </form>
                                     </div>
                                     <!-- .chat-right-panel -->
                                 </div>
@@ -69,10 +44,49 @@
                         </div>
                     </div>
                     @else
-                        <div class = "alert alert-warning text-center">
+                        <div class="alert alert-warning text-center">
                             <h4>Тикетов не найдено!</h4>
-                        </div>
+                        </div>        
                     @endif
+                    <div class="modal fade" id="createTicket" aria-hidden="true" style="display: none;">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form action="{{route('AdminTicketsCreate')}}" method="POST" class="form-horizontal">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="user" class="col-md-12">ID или Email пользователя</label>
+                                            <div class="col-md-12">
+                                                <input type="text" class="form-control" name="to" id="user">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="subject" class="col-md-12">Тема</label>
+                                            <div class="col-md-12">
+                                                <input type="text" class="form-control" name="subject" id="subject">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="message" class="col-md-12">Сообщение</label>
+                                            <div class="col-md-12">
+                                                <textarea class="form-control" name="message" id="message" rows="10"></textarea>
+                                            </div>
+                                        </div>                                            
+                                    </div>
+                                    <div class="modal-footer">
+                                        {{ csrf_field() }}
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <button class="btn btn-success">Создать</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>                    
                 </div>
             </div>
         </div>        

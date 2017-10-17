@@ -2,6 +2,23 @@
 
 @section('pageTitle', 'Тикеты')
 @section('content')
+    <div class="modal fade" id="deleteModal" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('AdminTicketsDelete') }}" method="POST" class="form-horizontal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">Вы точно хотите удалить данный тикет?</div>
+                    <div class="modal-footer">
+                        {{ method_field('DELETE') }}
+                        <input type="hidden" name="id" value="">
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <!-- Column -->
         <div class="col-12">
@@ -36,7 +53,7 @@
                                     <div class="chat-right-aside">
                                         <div class="chat-main-header">
                                             <div class="p-20 b-b">
-                                                <h3 class="box-title">{{ $subject }}</h3>
+                                                <h3 class="box-title">{{ $subject }} <a href="#deleteModal" class="delete_toggle" data-rel="{{ $ticket_id }}" data-toggle="modal"><i class="fa fa-close text-danger"></i></a></h3>
                                             </div>
                                         </div>
                                         <div class="chat-rbox">

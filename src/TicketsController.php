@@ -50,6 +50,18 @@ class TicketsController extends Controller
         }else return redirect()->route('AdminTickets');
     }
 
+    public function destroy(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required'
+        ]);
+
+        $ticket = Ticket::findOrFail($request->input('id'));
+        $ticket->delete();
+        
+        return redirect()->route('AdminTickets');        
+    }
+
     public function create_ticket(Request $request, Ticket $model, TicketData $modelData)
     {
         $this->validate($request, [
