@@ -21,27 +21,3 @@ And do not forget about
 ```php
 php artisan migrate
 ```
-
-## Functions
-
-```php
-/*
-  @ param $id (integer)
-  @ request type (get)
-*/
-function index($id) // get all about tickets and show blade 'show'
-$this->index(1) // usage
-
-/*
-  @ param $id (integer)
-  @ param $request (get)
-*/
-function chat($id) // get history on id ticket
-$this->chat(1) // usage
-
-/*
-  @ param $id (integer)
-  @ param $request (post)
-*/
-function send($id, Request $request) // sends a message on id ticket, transmit data: text (required)
-```

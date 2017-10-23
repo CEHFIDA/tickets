@@ -36,6 +36,49 @@
                                     <!-- .chat-left-panel -->
                                     <!-- .chat-right-panel -->
                                     <div class="chat-right-aside">
+                                        <div class="card card-block">
+                                            <!-- Row -->
+                                            <div class="row p-t-10 p-b-10">
+                                                <!-- Column -->
+                                                <div class="col p-r-0">
+                                                    <h1 class="font-light">{{ $new }}</h1>
+                                                    <h6 class="text-muted">Новых</h6></div>
+                                                <!-- Column -->
+                                                <div class="col text-right align-self-center">
+                                                    <div data-label="20%" class="css-bar m-b-0 css-bar-success css-bar-100"><i class="mdi mdi-comment-plus-outline"></i></div>
+                                                </div>
+                                            </div>
+                                            <div class="row p-t-10 p-b-10">
+                                                <!-- Column -->
+                                                <div class="col p-r-0">
+                                                    <h1 class="font-light">{{ $untreated }}</h1>
+                                                    <h6 class="text-muted">Необработаных</h6></div>
+                                                <!-- Column -->
+                                                <div class="col text-right align-self-center">
+                                                    <div data-label="20%" class="css-bar m-b-0 css-bar-success css-bar-100"><i class="mdi mdi-comment-processing-outline"></i></div>
+                                                </div>
+                                            </div>
+                                            <div class="row p-t-10 p-b-10">
+                                                <!-- Column -->
+                                                <div class="col p-r-0">
+                                                    <h1 class="font-light">{{ $closed }}</h1>
+                                                    <h6 class="text-muted">Закрытых</h6></div>
+                                                <!-- Column -->
+                                                <div class="col text-right align-self-center">
+                                                    <div data-label="20%" class="css-bar m-b-0 css-bar-success css-bar-100"><i class="mdi mdi-comment-remove-outline"></i></div>
+                                                </div>
+                                            </div>                                            
+                                            <div class="row p-t-10 p-b-10">
+                                                <!-- Column -->
+                                                <div class="col p-r-0">
+                                                    <h1 class="font-light">{{ count($tickets) }}</h1>
+                                                    <h6 class="text-muted">Всего</h6></div>
+                                                <!-- Column -->
+                                                <div class="col text-right align-self-center">
+                                                    <div data-label="20%" class="css-bar m-b-0 css-bar-success css-bar-100"><i class="mdi mdi-comment-check-outline"></i></div>
+                                                </div>
+                                            </div>                                            
+                                        </div>                  
                                     </div>
                                     <!-- .chat-right-panel -->
                                 </div>

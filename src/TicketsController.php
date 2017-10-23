@@ -3,37 +3,73 @@
 namespace Selfreliance\tickets;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
 use App\User;
+use Illuminate\Http\Request;
 use Selfreliance\Tickets\Models\Ticket;
 use Selfreliance\Tickets\Models\TicketData;
 
 class TicketsController extends Controller
 {
+	/**
+	 * Index
+	 * @return view home with tickets, info($new, $untreated, $closed)
+	*/
     public function index()
     {
     	$tickets = Ticket::orderBy('id', 'desc')->get();
-        return view('tickets::show')->with(['tickets'=>$tickets]);
+        $new = 
+        $untreated = 
+        $closed = 0;
+        $tickets->each(
+            function($row) use (&$new, &$untreated, &$closed)
+            {
+                if($row->status == 'close') $closed++;
+                else if($row->status == 'wait') $untreated++;
+            }
+        );
+
+        return view('tickets::home')->with([
+            'tickets'=>$tickets,
+            'new'=>$new,
+            'untreated'=>$untreated,
+            'closed'=>$closed
+        ]);
     }
 
+    /**
+     * Chat history
+     * @param int $id
+     * @return view chat with: ticket_id, subject, name, history, tickets
+    */
     public function chat($id)
     {
         $ticket = Ticket::findOrFail($id);
-        if($ticket){
-            $name = User::where('id', $ticket->user_id)->value('name');
-            $history = TicketData::where('tickets_id', $id)->get();
+        $status = $ticket->status;
+        $name = User::where('id', $ticket->user_id)->value('name');
+        $history = TicketData::where('tickets_id', $id)->get();
+        if(count($history) > 0)
+        {
             $tickets = Ticket::orderBy('id', 'desc')->get();
+            
             return view('tickets::chat')->with([
                 'ticket_id'=>$id,
+                'status'=>$status,
                 'subject'=>$ticket->subject,
                 'name'=>$name,
                 'history'=>$history,
                 'tickets'=>$tickets
             ]);
-        }else return redirect()->route('AdminTickets');
+        }
+        else return redirect()->route('AdminTicketsHome');
     }
 
+    /**
+     * Send message
+     * @param int $id
+     * @param request $request
+     * @param \TicketData $modelData
+     * @return mixed
+    */
     public function send($id, Request $request, TicketData $modelData)
     {
         $this->validate($request, [
@@ -41,27 +77,53 @@ class TicketsController extends Controller
         ]);
 
         $ticket = Ticket::findOrFail($id);
-        if($ticket){
+        if($ticket->status != 'close')
+        {
             $modelData->tickets_id = $id;
             $modelData->is_admin = 1;
             $modelData->message = $request->input('text');
             $modelData->save();
+
             return redirect()->route('AdminTicketsChat', $id)->with('status', 'Сообщение было отправлено!');
-        }else return redirect()->route('AdminTickets');
+        }
+
+        return redirect()->route('AdminTicketsHome')->with('status', 'Тикет закрыт!');
     }
 
-    public function destroy(Request $request)
+    /**
+     * Close ticket
+     * @param int $id
+     * @return mixed
+    */
+    public function close($id)
     {
-        $this->validate($request, [
-            'id' => 'required'
-        ]);
+        $ticket = Ticket::findOrFail($id);
+        $ticket->status = 'close';
+        $ticket->save();
 
-        $ticket = Ticket::findOrFail($request->input('id'));
+        return redirect()->route('AdminTicketsHome')->with('status', 'Тикет закрыт!');
+    }
+
+    /**
+     * Destroy ticket
+     * @param int $id
+     * @return mixed
+    */
+    public function destroy($id)
+    {
+        $ticket = Ticket::findOrFail($id);
         $ticket->delete();
         
-        return redirect()->route('AdminTickets');        
+        return redirect()->route('AdminTicketsHome')->with('status', 'Тикет удален!');
     }
 
+    /**
+     * Create ticket
+     * @param request $request
+     * @param \Ticket $model
+     * @param \TicketData $modelData
+     * @return mixed
+    */
     public function create_ticket(Request $request, Ticket $model, TicketData $modelData)
     {
         $this->validate($request, [
@@ -71,7 +133,8 @@ class TicketsController extends Controller
         ]);
 
         $user = User::where('id', $request['to'])->orWhere('email', $request['to'])->value('id');
-        if($user){
+        if($user)
+        {
             $model->user_id = $user;
             $model->from = 'Support';
             $model->subject = $request->input('subject');
@@ -82,7 +145,8 @@ class TicketsController extends Controller
             $modelData->message = $request->input('message');
             $modelData->save();
 
-            return redirect()->route('AdminTickets')->with('status', 'Тикет успешно создан!');
-        }else return redirect()->route('AdminTickets');
+            return redirect()->route('AdminTicketsHome')->with('status', 'Тикет создан!');
+        }
+        else return redirect()->route('AdminTicketsHome');
     }
 }

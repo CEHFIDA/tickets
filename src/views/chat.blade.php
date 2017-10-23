@@ -2,24 +2,10 @@
 
 @section('pageTitle', 'Тикеты')
 @section('content')
-    <div class="modal fade" id="deleteModal" aria-hidden="true" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="{{ route('AdminTicketsDelete') }}" method="POST" class="form-horizontal">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    </div>
-                    <div class="modal-body">Вы точно хотите удалить данный тикет?</div>
-                    <div class="modal-footer">
-                        {{ method_field('DELETE') }}
-                        {{ csrf_field() }}
-                        <input type="hidden" name="id" value="">
-                        <button type="submit" class="btn btn-danger">Удалить</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <script>
+    var route = '{{ route('AdminTicketsDelete') }}';
+    var message = 'Вы точно хотите удалить данный тикет?';
+    </script>
     <div class="row">
         <!-- Column -->
         <div class="col-12">
@@ -54,7 +40,10 @@
                                     <div class="chat-right-aside">
                                         <div class="chat-main-header">
                                             <div class="p-20 b-b">
-                                                <h3 class="box-title">{{ $subject }} <a href="#deleteModal" class="delete_toggle" data-rel="{{ $ticket_id }}" data-toggle="modal"><i class="fa fa-close text-danger"></i></a></h3>
+                                                <h3 class="box-title">{{ $subject }}
+                                                <a href="#deleteModal" class="delete_toggle" data-id="{{ $ticket_id }}" data-toggle="modal"><i class="fa fa-close text-danger"></i></a>
+                                                <a href="{{ route('AdminTicketsClose', $ticket_id) }}"><i class="fa fa-ban text-danger"></i></a>
+                                                </h3>
                                             </div>
                                         </div>
                                         <div class="chat-rbox">
@@ -78,6 +67,7 @@
                                             @endforeach
                                             </ul>
                                         </div>
+                                        @if($status != 'close')
                                         <div class="card-block b-t">
                                             <form action="{{route('AdminTicketsSend', $ticket_id)}}" method="POST" class="form-horizontal">
                                                 {{ csrf_field() }} 
@@ -90,7 +80,8 @@
                                                     </div>
                                                 </div>
                                             </form>
-                                        </div>
+                                        </div>                                        
+                                        @endif
                                     </div>
                                     <!-- .chat-right-panel -->
                                 </div>
