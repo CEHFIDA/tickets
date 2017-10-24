@@ -143,7 +143,8 @@ class TicketsController extends Controller
         ]);
 
         $user = User::where('id', $request['to'])->orWhere('email', $request['to'])->first();
-        if($user->id)
+
+        if($user)
         {
             $model->user_id = $user->id;
             $model->from = 'Support';
