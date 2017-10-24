@@ -17,14 +17,24 @@ class TicketsController extends Controller
     public function index()
     {
     	$tickets = Ticket::orderBy('id', 'desc')->get();
+        
         $new = 
         $untreated = 
         $closed = 0;
+
         $tickets->each(
             function($row) use (&$new, &$untreated, &$closed)
             {
                 if($row->status == 'close') $closed++;
                 else if($row->status == 'wait') $untreated++;
+                else
+                {
+                    $is_new = TicketData::where([
+                        ['tickets_id', '=', $row->id],
+                        ['is_admin', '=', 0]
+                    ])->first();
+                    if($is_new) $new++;
+                }
             }
         );
 
@@ -132,10 +142,10 @@ class TicketsController extends Controller
             'message' => 'required|min:2'
         ]);
 
-        $user = User::where('id', $request['to'])->orWhere('email', $request['to'])->value('id');
-        if($user)
+        $user = User::where('id', $request['to'])->orWhere('email', $request['to'])->first();
+        if($user->id)
         {
-            $model->user_id = $user;
+            $model->user_id = $user->id;
             $model->from = 'Support';
             $model->subject = $request->input('subject');
             $model->save();

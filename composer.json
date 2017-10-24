@@ -1,7 +1,7 @@
 {
   "name": "selfreliance/tickets",
   "type": "library",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "List of tickets for adminamazing",
   "keywords": ["admin", "tickets", "laravel"],
   "homepage": "https://github.com/selfrelianceme/tickets",
