@@ -165,7 +165,7 @@ class TicketsController extends Controller
             'message' => 'required|min:2'
         ]);
 
-        $user = User::where('id', $request['to'])->orWhere('email', $request['to'])->first();
+        $user = \DB::table('users')->where('id', $request['to'])->orWhere('email', $request['to'])->first();
 
         if($user)
         {
@@ -181,6 +181,7 @@ class TicketsController extends Controller
 
             flash()->success('Тикет создан!');
         }
+        else flash()->error('Пользователь не найден!');
 
         return redirect()->route('AdminTicketsHome');
     }
