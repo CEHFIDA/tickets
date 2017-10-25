@@ -12,4 +12,9 @@ class Ticket extends Model
     protected $fillable = [
         'user_id', 'subject'
     ];
+
+	public function ticket_data()
+	{
+        return $this->hasMany('Selfreliance\Tickets\Models\TicketData', 'tickets_id');
+    }
 }

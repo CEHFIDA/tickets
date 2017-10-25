@@ -32,8 +32,11 @@ class TicketsController extends Controller
                     $is_new = TicketData::where([
                         ['tickets_id', '=', $row->id],
                         ['is_admin', '=', 0]
-                    ])->first();
-                    if($is_new) $new++;
+                    ])->orderBy('created_at', 'desc')->first();
+                    if($is_new)
+                    {
+                        if($is_new->read == false) $new++;
+                    }
                 }
             }
         );
@@ -89,10 +92,19 @@ class TicketsController extends Controller
         $ticket = Ticket::findOrFail($id);
         if($ticket->status != 'close')
         {
+            TicketData::where([
+                ['tickets_id', '=', $id],
+                ['is_admin', '=', 0],
+                ['read', '=', false]
+            ])->update(['read' => true]);
+
             $modelData->tickets_id = $id;
             $modelData->is_admin = 1;
             $modelData->message = $request->input('text');
             $modelData->save();
+
+            $ticket->status = 'open';
+            $ticket->save();
 
             return redirect()->route('AdminTicketsChat', $id)->with('status', 'Сообщение было отправлено!');
         }
@@ -122,6 +134,7 @@ class TicketsController extends Controller
     public function destroy($id)
     {
         $ticket = Ticket::findOrFail($id);
+        $ticket->ticket_data()->delete();
         $ticket->delete();
         
         return redirect()->route('AdminTicketsHome')->with('status', 'Тикет удален!');
