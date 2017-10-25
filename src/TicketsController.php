@@ -106,10 +106,16 @@ class TicketsController extends Controller
             $ticket->status = 'open';
             $ticket->save();
 
-            return redirect()->route('AdminTicketsChat', $id)->with('status', 'Сообщение было отправлено!');
-        }
+            flash()->success('Сообщение успешно отправлено!');
 
-        return redirect()->route('AdminTicketsHome')->with('status', 'Тикет закрыт!');
+            return redirect()->route('AdminTicketsChat', $id);
+        }
+        else
+        {
+            flash()->error('Тикет закрыт!');
+
+            return redirect()->route('AdminTicketsHome');
+        }
     }
 
     /**
@@ -123,7 +129,9 @@ class TicketsController extends Controller
         $ticket->status = 'close';
         $ticket->save();
 
-        return redirect()->route('AdminTicketsHome')->with('status', 'Тикет закрыт!');
+        flash()->success('Тикет закрыт!');
+
+        return redirect()->route('AdminTicketsHome');
     }
 
     /**
@@ -136,8 +144,10 @@ class TicketsController extends Controller
         $ticket = Ticket::findOrFail($id);
         $ticket->ticket_data()->delete();
         $ticket->delete();
+
+        flash()->success('Тикет удален!');
         
-        return redirect()->route('AdminTicketsHome')->with('status', 'Тикет удален!');
+        return redirect()->route('AdminTicketsHome');
     }
 
     /**
@@ -169,8 +179,9 @@ class TicketsController extends Controller
             $modelData->message = $request->input('message');
             $modelData->save();
 
-            return redirect()->route('AdminTicketsHome')->with('status', 'Тикет создан!');
+            flash()->success('Тикет создан!');
         }
-        else return redirect()->route('AdminTicketsHome');
+
+        return redirect()->route('AdminTicketsHome');
     }
 }
