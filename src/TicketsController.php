@@ -110,7 +110,7 @@ class TicketsController extends Controller
 
             event(new NewMessage(
                 $ticket->user_id,
-                $id,
+                intval($id),
                 1
             ));
 
