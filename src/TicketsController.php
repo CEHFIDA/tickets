@@ -7,6 +7,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Selfreliance\Tickets\Models\Ticket;
 use Selfreliance\Tickets\Models\TicketData;
+use Selfreliance\Tickets\Events\NewMessage;
 
 class TicketsController extends Controller
 {
@@ -33,9 +34,10 @@ class TicketsController extends Controller
                         ['tickets_id', '=', $row->id],
                         ['is_admin', '=', 0]
                     ])->orderBy('created_at', 'desc')->first();
+                    
                     if($is_new)
                     {
-                        if($is_new->read == false) $new++;
+                        if($is_new->read == false && $is_new->is_admin == 0) $new++;
                     }
                 }
             }
@@ -105,6 +107,12 @@ class TicketsController extends Controller
 
             $ticket->status = 'open';
             $ticket->save();
+
+            event(new NewMessage(
+                $ticket->user_id,
+                $id,
+                1
+            ));
 
             flash()->success('Сообщение успешно отправлено!');
 
