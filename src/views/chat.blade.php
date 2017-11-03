@@ -26,7 +26,7 @@
                                                 <li>
                                                     <a class="{{($ticket->id == $ticket_id) ? 'active' : NULL}}" href ="{{route('AdminTicketsChat', $ticket->id)}}">
                                                         <span>
-                                                            {!! \DB::table('users')->where('id', $ticket->user_id)->value('name') !!}
+                                                            {!! DB::table('users')->where('id', $ticket->user_id)->value('name') !!}
                                                         </span>
                                                     </a>
                                                 </li>

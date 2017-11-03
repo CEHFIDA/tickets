@@ -12,9 +12,10 @@
                 {
                     $("#new").text(parseInt($("#new").text()) + 1);
                     $("#count").text(parseInt($("#count").text()) + 1);
-                    var route = '{{route('AdminTicketsChat')}}';
+                    var route = "{{route('AdminTicketsChat')}}";
+                    var name = "{!! DB::table('users')->where('id',"+message.data.new_ticket.user_id+")->value('name') !!}";
                     route = route+'/'+message.data.new_ticket.id;
-                    $("#list").prepend("<li><a href="+route+"><span>{!! \DB::table('users')->where('id',"+message.data.new_ticket.user_id+")->value('name') !!}</span></a></li>");
+                    $("#list").prepend("<li><a href="+route+"><span>"+name+"</span></a></li>");
                 }
                 else
                 {
@@ -48,7 +49,7 @@
                                                 <li>
                                                     <a href="{{route('AdminTicketsChat', $ticket->id)}}">
                                                         <span>
-                                                            {!! \DB::table('users')->where('id', $ticket->user_id)->value('name') !!}
+                                                            {!! DB::table('users')->where('id', $ticket->user_id)->value('name') !!}
                                                         </span>
                                                     </a>
                                                 </li>
