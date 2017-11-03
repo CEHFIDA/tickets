@@ -113,7 +113,8 @@ class TicketsController extends Controller
                 intval($id),
                 1,
                 null,
-                $modelData
+                $modelData,
+                null
             ));
 
             flash()->success('Сообщение успешно отправлено!');

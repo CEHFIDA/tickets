@@ -14,8 +14,9 @@ class NewMessage implements ShouldBroadcast
 {
     use SerializesModels;
 
-    public $user;
     public $id;
+    public $user;
+    public $username;
     public $admin;
     public $ticket;
     public $message;
@@ -25,10 +26,11 @@ class NewMessage implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($user, $id, $admin, $ticket, $message)
+    public function __construct($user, $id, $admin, $ticket, $message, $username)
     {
-        $this->user = $user;
         $this->id = $id;
+        $this->user = $user;
+        $this->username = $username;
         $this->admin = $admin;
         $this->ticket = $ticket;
         $this->message = $message;
@@ -47,9 +49,10 @@ class NewMessage implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'id' => $this->id, 
-            'user' => $this->user, 
-            'is_admin' => $this->admin, 
+            'id' => $this->id,
+            'user' => $this->user,
+            'username' => $this->username,
+            'is_admin' => $this->admin,
             'new_ticket' => $this->ticket,
             'message' => $this->message
         ];

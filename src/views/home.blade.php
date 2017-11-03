@@ -13,9 +13,8 @@
                     $("#new").text(parseInt($("#new").text()) + 1);
                     $("#count").text(parseInt($("#count").text()) + 1);
                     var route = "{{route('AdminTicketsChat')}}";
-                    var name = "{!! DB::table('users')->where('id',"+message.data.new_ticket.user_id+")->value('name') !!}";
                     route = route+'/'+message.data.new_ticket.id;
-                    $("#list").prepend("<li><a href="+route+"><span>"+name+"</span></a></li>");
+                    $("#list").prepend("<li><a href="+route+"><span>"+message.data.username+"</span></a></li>");
                 }
                 else
                 {
@@ -26,7 +25,6 @@
         socket.emit("subscribe", "userMessages");
     </script>
     <div class="row">
-        <!-- Column -->
         <div class="col-12">
             <div class="card">
                 <div class="card-block">
@@ -38,9 +36,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="card m-b-0">
-                                <!-- .chat-row -->
                                 <div class="chat-main-box">
-                                    <!-- .chat-left-panel -->
                                     <div class="chat-left-aside">
                                         <div class="open-panel"><i class="ti-angle-right"></i></div>
                                         <div class="chat-left-inner">
@@ -58,8 +54,6 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <!-- .chat-left-panel -->
-                                    <!-- .chat-right-panel -->
                                     <div class="chat-right-aside">
                                         <div class="card card-block">
                                             <div class="row">
@@ -95,12 +89,10 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>                                         
-                                        </div>                  
+                                            </div>
+                                        </div>
                                     </div>
-                                    <!-- .chat-right-panel -->
                                 </div>
-                                <!-- /.chat-row -->
                             </div>
                         </div>
                     </div>
