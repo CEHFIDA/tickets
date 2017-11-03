@@ -15,19 +15,23 @@ class NewMessage implements ShouldBroadcast
     use SerializesModels;
 
     public $user;
-    public $message;
+    public $id;
     public $admin;
+    public $ticket;
+    public $message;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user, $message, $admin)
+    public function __construct($user, $id, $admin, $ticket, $message)
     {
         $this->user = $user;
-        $this->message = $message;
+        $this->id = $id;
         $this->admin = $admin;
+        $this->ticket = $ticket;
+        $this->message = $message;
     }
 
     /**
@@ -42,7 +46,13 @@ class NewMessage implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        return ['id' => $this->message, 'user' => $this->user, 'is_admin' => $this->admin];
+        return [
+            'id' => $this->id, 
+            'user' => $this->user, 
+            'is_admin' => $this->admin, 
+            'new_ticket' => $this->ticket,
+            'message' => $this->message
+        ];
     }
 
     public function broadcastAs()

@@ -2,6 +2,28 @@
 
 @section('pageTitle', 'Тикеты')
 @section('content')
+    <script src="{{ asset('js/socket.io.js') }}"></script>
+    <script>
+        var socket = io("https://testdev.blockdash.io/socket.io");
+        socket.on("userMessages", 
+            function(message)
+            {
+                if(message.data.new_ticket !== null)
+                {
+                    $("#new").text(parseInt($("#new").text()) + 1);
+                    $("#count").text(parseInt($("#count").text()) + 1);
+                    var route = '{{route('AdminTicketsChat')}}';
+                    route = route+'/'+message.data.new_ticket.id;
+                    $("#list").prepend("<li><a href="+route+"><span>{!! \DB::table('users')->where('id',"+message.data.new_ticket.user_id+")->value('name') !!}</span></a></li>");
+                }
+                else
+                {
+                    $("#untreated").text(parseInt($("#untreated").text()) + 1);
+                }
+            }
+        );
+        socket.emit("subscribe", "userMessages");
+    </script>
     <div class="row">
         <!-- Column -->
         <div class="col-12">
@@ -21,7 +43,7 @@
                                     <div class="chat-left-aside">
                                         <div class="open-panel"><i class="ti-angle-right"></i></div>
                                         <div class="chat-left-inner">
-                                            <ul class="chatonline style-none ">
+                                            <ul class="chatonline style-none" id="list">
                                                 @foreach($tickets as $ticket)
                                                 <li>
                                                     <a href="{{route('AdminTicketsChat', $ticket->id)}}">
@@ -43,7 +65,7 @@
                                                 <div class="col-md-12 col-lg-12 col-xlg-12">
                                                     <div class="card card-inverse card-success">
                                                         <div class="box bg-success text-center">
-                                                            <h1 class="font-light text-white">{{ $new }}</h1>
+                                                            <h1 class="font-light text-white" id="new">{{ $new }}</h1>
                                                             <h6 class="text-white">Новых</h6>
                                                         </div>
                                                     </div>
@@ -51,7 +73,7 @@
                                                 <div class="col-md-6 col-lg-6 col-xlg-6">
                                                     <div class="card card-inverse card-warning">
                                                         <div class="box bg-warning text-center">
-                                                            <h1 class="font-light text-white">{{ $untreated }}</h1>
+                                                            <h1 class="font-light text-white" id="untreated">{{ $untreated }}</h1>
                                                             <h6 class="text-white">Необработаных</h6>
                                                         </div>
                                                     </div>
@@ -67,7 +89,7 @@
                                                 <div class="col-md-12 col-lg-12 col-xlg-12">
                                                     <div class="card card-inverse card-info">
                                                         <div class="box bg-info text-center">
-                                                            <h1 class="font-light text-white">{{ count($tickets) }}</h1>
+                                                            <h1 class="font-light text-white" id="count">{{ count($tickets) }}</h1>
                                                             <h6 class="text-white">Всего</h6>
                                                         </div>
                                                     </div>

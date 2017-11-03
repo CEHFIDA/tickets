@@ -111,7 +111,9 @@ class TicketsController extends Controller
             event(new NewMessage(
                 $ticket->user_id,
                 intval($id),
-                1
+                1,
+                null,
+                $modelData
             ));
 
             flash()->success('Сообщение успешно отправлено!');
@@ -186,6 +188,14 @@ class TicketsController extends Controller
             $modelData->is_admin = 1;
             $modelData->message = $request->input('message');
             $modelData->save();
+
+            event(new NewMessage(
+                $user->id,
+                intval($model->id),
+                1,
+                $model,
+                null
+            ));            
 
             flash()->success('Тикет создан!');
         }
