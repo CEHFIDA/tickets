@@ -105,6 +105,8 @@ class TicketsController extends Controller
             $modelData->message = $request->input('text');
             $modelData->save();
 
+            $modelData->name = 'Support';
+
             $ticket->status = 'open';
             $ticket->save();
 
@@ -113,8 +115,7 @@ class TicketsController extends Controller
                 intval($id),
                 1,
                 null,
-                $modelData,
-                null
+                $modelData
             ));
 
             flash()->success('Сообщение успешно отправлено!');
@@ -196,7 +197,7 @@ class TicketsController extends Controller
                 1,
                 $model,
                 null
-            ));            
+            ));
 
             flash()->success('Тикет создан!');
         }

@@ -14,7 +14,7 @@
                     $("#count").text(parseInt($("#count").text()) + 1);
                     var route = "{{route('AdminTicketsChat')}}";
                     route = route+'/'+message.data.new_ticket.id;
-                    $("#list").prepend("<li><a href="+route+"><span>"+message.data.username+"</span></a></li>");
+                    $("#list").prepend("<li><a href="+route+"><span>"+message.data.message.name+"</span></a></li>");
                 }
                 else
                 {
