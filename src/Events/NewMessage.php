@@ -16,6 +16,7 @@ class NewMessage implements ShouldBroadcast
 
     public $id;
     public $user;
+    public $name;
     public $admin;
     public $ticket;
     public $message;
@@ -25,10 +26,11 @@ class NewMessage implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($user, $id, $admin, $ticket, $message)
+    public function __construct($user, $id, $admin, $ticket, $message, $name)
     {
         $this->id = $id;
         $this->user = $user;
+        $this->name = $name;
         $this->admin = $admin;
         $this->ticket = $ticket;
         $this->message = $message;
@@ -49,6 +51,7 @@ class NewMessage implements ShouldBroadcast
         return [
             'id' => $this->id,
             'user' => $this->user,
+            'name' => $this->name,
             'is_admin' => $this->admin,
             'new_ticket' => $this->ticket,
             'message' => $this->message
