@@ -2,28 +2,30 @@
 
 @section('pageTitle', 'Тикеты')
 @section('content')
-    <script src="{{ asset('js/socket.io.js') }}"></script>
-    <script>
-        var socket = io("https://testdev.blockdash.io/socket.io");
-        socket.on("userMessages", 
-            function(message)
-            {
-                if(message.data.new_ticket !== null)
+    @push('scripts')
+        <script src="{{ asset('js/socket.io.js') }}"></script>
+        <script>
+            var socket = io("https://testdev.blockdash.io/socket.io");
+            socket.on("userMessages", 
+                function(message)
                 {
-                    $("#new").text(parseInt($("#new").text()) + 1);
-                    $("#count").text(parseInt($("#count").text()) + 1);
-                    var route = "{{route('AdminTicketsChat')}}";
-                    route = route+'/'+message.data.new_ticket.id;
-                    $("#list").prepend("<li><a href="+route+"><span>"+message.data.name+"</span></a></li>");
+                    if(message.data.new_ticket !== null)
+                    {
+                        $("#new").text(parseInt($("#new").text()) + 1);
+                        $("#count").text(parseInt($("#count").text()) + 1);
+                        var route = "{{route('AdminTicketsChat')}}";
+                        route = route+'/'+message.data.new_ticket.id;
+                        $("#list").prepend("<li><a href="+route+"><span>"+message.data.name+"</span></a></li>");
+                    }
+                    else
+                    {
+                        $("#untreated").text(parseInt($("#untreated").text()) + 1);
+                    }
                 }
-                else
-                {
-                    $("#untreated").text(parseInt($("#untreated").text()) + 1);
-                }
-            }
-        );
-        socket.emit("subscribe", "userMessages");
-    </script>
+            );
+            socket.emit("subscribe", "userMessages");
+        </script>
+    @endpush
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -45,7 +47,7 @@
                                                 <li>
                                                     <a href="{{route('AdminTicketsChat', $ticket->id)}}">
                                                         <span>
-                                                            {!! DB::table('users')->where('id', $ticket->user_id)->value('name') !!}
+                                                            {!!DB::table('tickets')->where('tickets.id', $ticket->id)->leftJoin('users', 'tickets.user_id', '=', 'users.id')->select('users.name')->first()->name!!}
                                                         </span>
                                                     </a>
                                                 </li>
@@ -60,7 +62,7 @@
                                                 <div class="col-md-12 col-lg-12 col-xlg-12">
                                                     <div class="card card-inverse card-success">
                                                         <div class="box bg-success text-center">
-                                                            <h1 class="font-light text-white" id="new">{{ $new }}</h1>
+                                                            <h1 class="font-light text-white" id="new">{{$new}}</h1>
                                                             <h6 class="text-white">Новых</h6>
                                                         </div>
                                                     </div>
@@ -68,7 +70,7 @@
                                                 <div class="col-md-6 col-lg-6 col-xlg-6">
                                                     <div class="card card-inverse card-warning">
                                                         <div class="box bg-warning text-center">
-                                                            <h1 class="font-light text-white" id="untreated">{{ $untreated }}</h1>
+                                                            <h1 class="font-light text-white" id="untreated">{{$untreated}}</h1>
                                                             <h6 class="text-white">Необработаных</h6>
                                                         </div>
                                                     </div>
@@ -76,7 +78,7 @@
                                                 <div class="col-md-6 col-lg-6 col-xlg-6">
                                                     <div class="card card-inverse card-danger">
                                                         <div class="box bg-danger text-center">
-                                                            <h1 class="font-light text-white">{{ $closed }}</h1>
+                                                            <h1 class="font-light text-white">{{$closed}}</h1>
                                                             <h6 class="text-white">Закрытыхх</h6>
                                                         </div>
                                                     </div>
@@ -84,7 +86,7 @@
                                                 <div class="col-md-12 col-lg-12 col-xlg-12">
                                                     <div class="card card-inverse card-info">
                                                         <div class="box bg-info text-center">
-                                                            <h1 class="font-light text-white" id="count">{{ count($tickets) }}</h1>
+                                                            <h1 class="font-light text-white" id="count">{{count($tickets)}}</h1>
                                                             <h6 class="text-white">Всего</h6>
                                                         </div>
                                                     </div>
@@ -129,7 +131,7 @@
                                         </div>                                            
                                     </div>
                                     <div class="modal-footer">
-                                        {{ csrf_field() }}
+                                        {{csrf_field()}}
                                         <div class="form-group">
                                             <div class="col-sm-12">
                                                 <button class="btn btn-success">Создать</button>

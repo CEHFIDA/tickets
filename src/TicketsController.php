@@ -18,7 +18,7 @@ class TicketsController extends Controller
     public function index()
     {
     	$tickets = Ticket::orderBy('id', 'desc')->get();
-        
+
         $new = 
         $untreated = 
         $closed = 0;
@@ -44,10 +44,10 @@ class TicketsController extends Controller
         );
 
         return view('tickets::home')->with([
-            'tickets'=>$tickets,
-            'new'=>$new,
-            'untreated'=>$untreated,
-            'closed'=>$closed
+            'tickets' => $tickets,
+            'new' => $new,
+            'untreated' => $untreated,
+            'closed' => $closed,
         ]);
     }
 
@@ -60,19 +60,21 @@ class TicketsController extends Controller
     {
         $ticket = Ticket::findOrFail($id);
         $status = $ticket->status;
-        $name = User::where('id', $ticket->user_id)->value('name');
+        $name = Ticket::where('tickets.id', $ticket->id)
+        ->leftJoin('users', 'tickets.user_id', '=', 'users.id')
+        ->select('users.name')->first();
         $history = TicketData::where('tickets_id', $id)->get();
         if(count($history) > 0)
         {
             $tickets = Ticket::orderBy('id', 'desc')->get();
             
             return view('tickets::chat')->with([
-                'ticket_id'=>$id,
-                'status'=>$status,
-                'subject'=>$ticket->subject,
-                'name'=>$name,
-                'history'=>$history,
-                'tickets'=>$tickets
+                'ticket_id' => $id,
+                'status' => $status,
+                'subject' => $ticket->subject,
+                'name' => $name,
+                'history' => $history,
+                'tickets' => $tickets
             ]);
         }
         else return redirect()->route('AdminTicketsHome');
@@ -117,13 +119,13 @@ class TicketsController extends Controller
                 'Support'
             ));
 
-            flash()->success('Сообщение успешно отправлено!');
+            flash()->success( trans('translate-tickets::tickets.messageSent') );
 
             return redirect()->route('AdminTicketsChat', $id);
         }
         else
         {
-            flash()->error('Тикет закрыт!');
+            flash()->error( trans('translate-tickets::tickets.closedTicket') );
 
             return redirect()->route('AdminTicketsHome');
         }
@@ -140,7 +142,7 @@ class TicketsController extends Controller
         $ticket->status = 'close';
         $ticket->save();
 
-        flash()->success('Тикет закрыт!');
+        flash()->success( trans('translate-tickets::tickets.closedTicket') );
 
         return redirect()->route('AdminTicketsHome');
     }
@@ -156,7 +158,7 @@ class TicketsController extends Controller
         $ticket->ticket_data()->delete();
         $ticket->delete();
 
-        flash()->success('Тикет удален!');
+        flash()->success( trans('translate-tickets::tickets.deletedTicket') );
         
         return redirect()->route('AdminTicketsHome');
     }
@@ -199,9 +201,9 @@ class TicketsController extends Controller
                 'Support'
             ));
 
-            flash()->success('Тикет создан!');
+            flash()->success( trans('translate-tickets::tickets.createdTicket') );
         }
-        else flash()->error('Пользователь не найден!');
+        else flash()->error( trans('translate-tickets::tickets.userNotFound') );
 
         return redirect()->route('AdminTicketsHome');
     }
