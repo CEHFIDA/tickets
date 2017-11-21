@@ -10,6 +10,12 @@
         <script src="{{ asset('vendor/adminamazing/js/jquery.slimscroll.js') }}"></script>
         <script src="{{ asset('vendor/adminamazing/js/chat.js') }}"></script>
     @endpush
+    @push('display')
+        <a href="#deleteModal" class="delete_toggle" data-id="{{ $ticket_id }}" data-toggle="modal"><button type="submit" class="btn btn-info"><i class="fa fa-trash"></i> Удалить</button></a>
+        @if($status != 'close')
+            <a href="{{route('AdminTicketsClose', $ticket_id)}}"><button type="submit" class="btn btn-info"><i class="fa fa-ban"></i> Закрыть</button></a>
+        @endif
+    @endpush
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -42,7 +48,6 @@
                                                 <div class="col-md-10">
                                                     <h3 class="box-title">{{$subject}}</h3>
                                                 </div>
-                                                <div class="col-md-2"><a href="#deleteModal" class="delete_toggle" data-id="{{ $ticket_id }}" data-toggle="modal"><i class="fa fa-trash text-danger"></i></a> <a href="{{route('AdminTicketsClose', $ticket_id)}}"><i class="fa fa-ban text-danger"></i></a></div>
                                             </div>
                                         </div>
                                         <div class="chat-rbox">

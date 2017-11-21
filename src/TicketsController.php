@@ -11,10 +11,6 @@ use Selfreliance\Tickets\Events\NewMessage;
 
 class TicketsController extends Controller
 {
-	/**
-	 * Index
-	 * @return view home with tickets, info($new, $untreated, $closed)
-	*/
     public function index()
     {
     	$tickets = Ticket::orderBy('id', 'desc')->get();
@@ -43,19 +39,9 @@ class TicketsController extends Controller
             }
         );
 
-        return view('tickets::home')->with([
-            'tickets' => $tickets,
-            'new' => $new,
-            'untreated' => $untreated,
-            'closed' => $closed,
-        ]);
+        return view('tickets::home', compact('tickets', 'new', 'untreated', 'closed'));
     }
 
-    /**
-     * Chat history
-     * @param int $id
-     * @return view chat with: ticket_id, subject, name, history, tickets
-    */
     public function chat($id)
     {
         $ticket = Ticket::findOrFail($id);
@@ -119,13 +105,13 @@ class TicketsController extends Controller
                 'Support'
             ));
 
-            flash()->success( trans('translate-tickets::tickets.messageSent') );
+            flash()->success('Сообщение успешно отправлено');
 
             return redirect()->route('AdminTicketsChat', $id);
         }
         else
         {
-            flash()->error( trans('translate-tickets::tickets.closedTicket') );
+            flash()->error('Тикет закрыт');
 
             return redirect()->route('AdminTicketsHome');
         }
@@ -142,7 +128,7 @@ class TicketsController extends Controller
         $ticket->status = 'close';
         $ticket->save();
 
-        flash()->success( trans('translate-tickets::tickets.closedTicket') );
+        flash()->success('Тикет закрыт');
 
         return redirect()->route('AdminTicketsHome');
     }
@@ -158,7 +144,7 @@ class TicketsController extends Controller
         $ticket->ticket_data()->delete();
         $ticket->delete();
 
-        flash()->success( trans('translate-tickets::tickets.deletedTicket') );
+        flash()->success('Тикет удален');
         
         return redirect()->route('AdminTicketsHome');
     }
@@ -201,9 +187,9 @@ class TicketsController extends Controller
                 'Support'
             ));
 
-            flash()->success( trans('translate-tickets::tickets.createdTicket') );
+            flash()->success('Тикет успешно создан');
         }
-        else flash()->error( trans('translate-tickets::tickets.userNotFound') );
+        else flash()->error('Пользователь не найден');
 
         return redirect()->route('AdminTicketsHome');
     }

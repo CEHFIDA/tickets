@@ -26,13 +26,15 @@
             socket.emit("subscribe", "userMessages");
         </script>
     @endpush
+    @push('display')
+        <button class="btn btn-success" data-toggle="modal" data-target="#createTicket"><i class="fa fa-plus" aria-hidden="true"></i> Создать тикет</button>
+    @endpush
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-block">
                     <h4 class="card-title">
                         @yield('pageTitle')
-                        <p class="text-right"><button class="btn btn-success" data-toggle="modal" data-target="#createTicket">Создать тикет</button></p>
                     </h4>
                     @if(count($tickets) > 0)
                     <div class="row">
@@ -99,9 +101,9 @@
                         </div>
                     </div>
                     @else
-                        <div class="alert alert-warning text-center">
-                            <h4>Тикетов не найдено!</h4>
-                        </div>        
+                    <div class="alert text-center">
+                        <h3 class="text-info"><i class="fa fa-exclamation-circle"></i> Information</h3> На данный момент отсутствуют тикеты
+                    </div>                              
                     @endif
                     <div class="modal fade" id="createTicket" aria-hidden="true" style="display: none;">
                         <div class="modal-dialog">
@@ -146,5 +148,4 @@
             </div>
         </div>        
     </div>
-    <!-- Column -->
 @endsection
