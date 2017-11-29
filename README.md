@@ -11,13 +11,3 @@ Install via composer
 ```
 composer require selfreliance/tickets
 ```
-
-Migrations
-```php
-php artisan vendor:publish --provider="Selfreliance\tickets\TicketsServiceProvider" --tag="migrations" --force
-```
-
-And do not forget about
-```php
-php artisan migrate
-```
