@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ticket extends Model
 {
+    const statusOpen = 'open';
+    const statusWait = 'wait';
+    const statusClose = 'close';
+
     use SoftDeletes;
 
     protected $fillable = [
@@ -16,5 +20,11 @@ class Ticket extends Model
 	public function ticket_data()
 	{
         return $this->hasMany('Selfreliance\Tickets\Models\TicketData', 'tickets_id');
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        $this->save();
     }
 }

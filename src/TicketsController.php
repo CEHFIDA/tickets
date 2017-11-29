@@ -11,9 +11,17 @@ use Selfreliance\Tickets\Events\NewMessage;
 
 class TicketsController extends Controller
 {
+    private $ticket, $ticketData;
+
+    public function __construct(Ticket $model, TicketData $modelData)
+    {
+        $this->ticket = $model;
+        $this->ticketData = $modelData;
+    }
+
     public function index()
     {
-    	$tickets = Ticket::orderBy('id', 'desc')->get();
+    	$tickets = $this->ticket->orderBy('id', 'desc')->get();
 
         $new = 
         $untreated = 
@@ -22,18 +30,18 @@ class TicketsController extends Controller
         $tickets->each(
             function($row) use (&$new, &$untreated, &$closed)
             {
-                if($row->status == 'close') $closed++;
-                else if($row->status == 'wait') $untreated++;
+                if($row->status == $this->ticket::statusClose) $closed++;
+                else if($row->status == $this->ticket::statusWait) $untreated++;
                 else
                 {
-                    $is_new = TicketData::where([
+                    $isNew = TicketData::where([
                         ['tickets_id', '=', $row->id],
                         ['is_admin', '=', 0]
                     ])->orderBy('created_at', 'desc')->first();
                     
-                    if($is_new)
+                    if($isNew)
                     {
-                        if($is_new->read == false && $is_new->is_admin == 0) $new++;
+                        if($isNew->read == false && $isNew->is_admin == 0) $new++;
                     }
                 }
             }
@@ -44,66 +52,52 @@ class TicketsController extends Controller
 
     public function chat($id)
     {
-        $ticket = Ticket::findOrFail($id);
-        $status = $ticket->status;
-        $name = Ticket::where('tickets.id', $ticket->id)
+        $ticket = $this->ticket->findOrFail($id);
+        $ticketID = $ticket->id;
+        $ticketStatus = $ticket->status;
+        $ticketSubject = $ticket->subject;
+
+        $ticketAuthor = Ticket::where('tickets.id', $ticket->id)
         ->leftJoin('users', 'tickets.user_id', '=', 'users.id')
         ->select('users.name')->first();
-        $history = TicketData::where('tickets_id', $id)->get();
-        if(count($history) > 0)
+
+        $ticketHistory = TicketData::where('tickets_id', $id)->get();
+        if(count($ticketHistory) > 0)
         {
-            $tickets = Ticket::orderBy('id', 'desc')->get();
-            
-            return view('tickets::chat')->with([
-                'ticket_id' => $id,
-                'status' => $status,
-                'subject' => $ticket->subject,
-                'name' => $name,
-                'history' => $history,
-                'tickets' => $tickets
-            ]);
+            $tickets = $this->ticket->orderBy('id', 'desc')->get();
+
+            return view('tickets::chat', 
+                compact('ticketID', 'ticketStatus', 'ticketSubject', 'ticketAuthor', 'ticketHistory', 'tickets')
+            );
         }
         else return redirect()->route('AdminTicketsHome');
     }
 
-    /**
-     * Send message
-     * @param int $id
-     * @param request $request
-     * @param \TicketData $modelData
-     * @return mixed
-    */
     public function send($id, Request $request, TicketData $modelData)
     {
         $this->validate($request, [
             'text' => 'required|min:2'
         ]);
 
-        $ticket = Ticket::findOrFail($id);
-        if($ticket->status != 'close')
+        $ticket = $this->ticket->findOrFail($id);
+        if($ticket->status != $this->ticket::statusClose)
         {
-            TicketData::where([
-                ['tickets_id', '=', $id],
-                ['is_admin', '=', 0],
-                ['read', '=', false]
-            ])->update(['read' => true]);
+            $this->ticketData->notReadAdmin($id)->update([
+                'read' => true
+            ]);
 
-            $modelData->tickets_id = $id;
-            $modelData->is_admin = 1;
-            $modelData->message = $request->input('text');
-            $modelData->save();
+            $data = [
+                'tickets_id' => $ticket->id,
+                'is_admin' => 1,
+                'message' => $request->input('text')
+            ];
 
-            $ticket->status = 'open';
-            $ticket->save();
+            $ticketData = $this->ticketData->create($data);
 
-            event(new NewMessage(
-                $ticket->user_id,
-                intval($id),
-                1,
-                null,
-                $modelData,
-                'Support'
-            ));
+            if($ticket->status != $this->ticket::statusWait)
+                $ticket->setStatus($this->ticket::statusOpen);
+
+            event(new NewMessage($ticket->user_id, intval($id), 1, null, $ticketData, 'Support'));
 
             flash()->success('Сообщение успешно отправлено');
 
@@ -117,31 +111,23 @@ class TicketsController extends Controller
         }
     }
 
-    /**
-     * Close ticket
-     * @param int $id
-     * @return mixed
-    */
     public function close($id)
     {
-        $ticket = Ticket::findOrFail($id);
-        $ticket->status = 'close';
-        $ticket->save();
+        $ticket = $this->ticket->findOrFail($id);
+        
+        $ticket->setStatus($this->ticket::statusClose);
 
         flash()->success('Тикет закрыт');
 
         return redirect()->route('AdminTicketsHome');
     }
 
-    /**
-     * Destroy ticket
-     * @param int $id
-     * @return mixed
-    */
     public function destroy($id)
     {
-        $ticket = Ticket::findOrFail($id);
+        $ticket = $this->ticket->findOrFail($id);
+
         $ticket->ticket_data()->delete();
+
         $ticket->delete();
 
         flash()->success('Тикет удален');
@@ -149,43 +135,35 @@ class TicketsController extends Controller
         return redirect()->route('AdminTicketsHome');
     }
 
-    /**
-     * Create ticket
-     * @param request $request
-     * @param \Ticket $model
-     * @param \TicketData $modelData
-     * @return mixed
-    */
     public function create_ticket(Request $request, Ticket $model, TicketData $modelData)
     {
         $this->validate($request, [
             'to' => 'required',
-            'subject' => 'required|min:2',
-            'message' => 'required|min:2'
+            'subject' => 'required',
+            'message' => 'required'
         ]);
 
         $user = \DB::table('users')->where('id', $request['to'])->orWhere('email', $request['to'])->first();
 
         if($user)
         {
-            $model->user_id = $user->id;
-            $model->from = 'Support';
-            $model->subject = $request->input('subject');
-            $model->save();
+            $data = [
+                'user_id' => $user->id,
+                'from' => 'Support',
+                'subject' => $request->input('subject')
+            ];
 
-            $modelData->tickets_id = $model->id;
-            $modelData->is_admin = 1;
-            $modelData->message = $request->input('message');
-            $modelData->save();
+            $ticket = $this->ticket->create($data);
 
-            event(new NewMessage(
-                $user->id,
-                intval($model->id),
-                1,
-                $model,
-                null,
-                'Support'
-            ));
+            $data = [
+                'tickets_id' => $ticket->id,
+                'is_admin' => 1,
+                'message' => $request->input('message')
+            ];
+
+            $this->ticketData->create($data);
+
+            event(new NewMessage($user->id, intval($ticket->id), 1, $ticket, null, 'Support'));
 
             flash()->success('Тикет успешно создан');
         }

@@ -14,4 +14,15 @@ class TicketData extends Model
     protected $fillable = [
         'tickets_id', 'is_admin', 'message'
     ];
+
+    public function setStatus($status)
+    {
+    	$this->status = $status;
+    	$this->save();
+    }
+
+    public function scopeNotReadAdmin($query, $id)
+    {
+    	return $query->where('tickets_id', $id)->where('is_admin', 0)->where('read', false);
+    }
 }
