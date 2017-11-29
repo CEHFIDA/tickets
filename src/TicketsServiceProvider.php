@@ -18,9 +18,6 @@ class TicketsServiceProvider extends ServiceProvider
         $this->app->make('Selfreliance\Tickets\TicketsController');
         $this->loadViewsFrom(__DIR__.'/views', 'tickets');
         $this->loadMigrationsFrom(__DIR__.'/migrations');
-        $this->publishes([
-            __DIR__ . '/migrations/' => database_path('migrations')
-        ], 'migrations');
     }
 
     /**
